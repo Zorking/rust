@@ -3,3 +3,9 @@
 name = "hello_world"
 version = "0.0.1"
 authors = [ "Vadim Fabrichnov" ]
+
+[dependencies]
+
+ws = "*"
+stdweb = "0.4.2"
+yew = { path = "../.." }
