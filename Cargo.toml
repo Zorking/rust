@@ -6,6 +6,5 @@ authors = [ "Vadim Fabrichnov" ]
 
 [dependencies]
 
-ws = "*"
 stdweb = "0.4.2"
-yew = { path = "../.." }
+yew = { path = "../yew" }

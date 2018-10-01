@@ -1,20 +1,18 @@
-extern crate stdweb;
 #[macro_use]
 extern crate yew;
 
-use stdweb::web::Date;
 use yew::prelude::*;
 use yew::services::ConsoleService;
 
 pub struct Model {
     console: ConsoleService,
-    value: i64,
+    value: i32,
+    messages: Vec<i32>,
 }
 
 pub enum Msg {
-    Increment,
-    Decrement,
-    Bulk(Vec<Msg>),
+    GotInput(i32),
+    Clicked,
 }
 
 impl Component for Model {
@@ -25,23 +23,24 @@ impl Component for Model {
         Model {
             console: ConsoleService::new(),
             value: 0,
+            messages: Vec::new(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Increment => {
-                self.value = self.value + 1;
-                self.console.log("plus one");
+            Msg::GotInput(new_value) => {
+                self.value = new_value;
             }
-            Msg::Decrement => {
-                self.value = self.value - 1;
-                self.console.log("minus one");
+            Msg::Clicked => {
+//                let y = *self.value;
+                self.messages.push(self.value);
+//                let x = self.messages.last();
+//                let s: String = x.to_string();
+                let s = "qwe";
+                self.console.log(&s);
+                println!("{}", s);
             }
-            Msg::Bulk(list) => for msg in list {
-                self.update(msg);
-                self.console.log("Bulk action");
-            },
         }
         true
     }
@@ -51,14 +50,29 @@ impl Renderable<Model> for Model {
     fn view(&self) -> Html<Self> {
         html! {
             <div>
-                <nav class="menu",>
-                    <button onclick=|_| Msg::Increment,>{ "Increment" }</button>
-                    <button onclick=|_| Msg::Decrement,>{ "Decrement" }</button>
-                    <button onclick=|_| Msg::Bulk(vec![Msg::Increment, Msg::Increment]),>{ "Increment Twice" }</button>
-                </nav>
-                <p>{ self.value }</p>
-                <p>{ Date::new().to_string() }</p>
+                <div>
+                    <textarea rows=5,
+                        value=&self.value,
+                        oninput=|e| Msg::GotInput(e.value.parse::<i32>().unwrap()),
+                        placeholder="placeholder",>
+                    </textarea>
+                     <button onclick=|_| Msg::Clicked,>{ "Send" }</button>
+                </div>
+                <div>
+                     { self.view_cols() }
+                </div>
             </div>
+        }
+    }
+}
+
+impl Model {
+    fn view_cols(&self) -> Html<Self> {
+        let render = |idx| html! {
+            <td>{ idx }</td>
+        };
+        html! { // We use a fragment directly
+            { for (0..self.messages.len()).map(render) }
         }
     }
 }
