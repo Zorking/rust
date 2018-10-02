@@ -40,6 +40,7 @@ impl Component for Model {
                 let s = "qwe";
                 self.console.log(&s);
                 println!("{}", s);
+                self.value = 0;
             }
         }
         true
@@ -58,9 +59,9 @@ impl Renderable<Model> for Model {
                     </textarea>
                      <button onclick=|_| Msg::Clicked,>{ "Send" }</button>
                 </div>
-                <div>
+                <ul>
                      { self.view_cols() }
-                </div>
+                </ul>
             </div>
         }
     }
@@ -68,11 +69,12 @@ impl Renderable<Model> for Model {
 
 impl Model {
     fn view_cols(&self) -> Html<Self> {
+        let mut veee = self.messages.to_vec();
         let render = |idx| html! {
-            <td>{ idx }</td>
+            <li>{ idx }</li>
         };
         html! { // We use a fragment directly
-            { for (0..self.messages.len()).map(render) }
+            { for &mut  veee.into_iter().map(render) }
         }
     }
 }
