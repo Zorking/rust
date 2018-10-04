@@ -7,3 +7,4 @@ authors = [ "Vadim Fabrichnov" ]
 [dependencies]
 stdweb = "0.4.2"
 yew = { path = "../../yew" }
+lazy_static = "1.0.1"

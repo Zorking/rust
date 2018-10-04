@@ -1,17 +1,21 @@
 #[macro_use]
 extern crate yew;
+extern crate stdweb;
 
+use stdweb::web::WebSocket;
 use yew::prelude::*;
 use yew::services::ConsoleService;
 
+
 pub struct Model {
     console: ConsoleService,
-    value: i32,
-    messages: Vec<i32>,
+    value: u8,
+    messages: Vec<u8>,
+    websoket: WebSocket,
 }
 
 pub enum Msg {
-    GotInput(i32),
+    GotInput(u8),
     Clicked,
 }
 
@@ -24,6 +28,7 @@ impl Component for Model {
             console: ConsoleService::new(),
             value: 0,
             messages: Vec::new(),
+            websoket: WebSocket::new("ws://127.0.0.1:3012").expect("Unable to connect to websocket"),
         }
     }
 
@@ -41,6 +46,7 @@ impl Component for Model {
                 self.console.log(&s);
                 println!("{}", s);
                 self.value = 0;
+                self.websoket.send_bytes(&[self.value]);
             }
         }
         true
@@ -54,7 +60,7 @@ impl Renderable<Model> for Model {
                 <div>
                     <textarea rows=5,
                         value=&self.value,
-                        oninput=|e| Msg::GotInput(e.value.parse::<i32>().unwrap()),
+                        oninput=|e| Msg::GotInput(e.value.parse::<u8>().unwrap()),
                         placeholder="placeholder",>
                     </textarea>
                      <button onclick=|_| Msg::Clicked,>{ "Send" }</button>
@@ -78,3 +84,4 @@ impl Model {
         }
     }
 }
+
