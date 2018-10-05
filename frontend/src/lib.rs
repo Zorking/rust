@@ -2,16 +2,13 @@
 extern crate yew;
 extern crate stdweb;
 
-use stdweb::web::WebSocket;
 use yew::prelude::*;
 use yew::services::ConsoleService;
 
 
 pub struct Model {
-    console: ConsoleService,
     value: u8,
     messages: Vec<u8>,
-    websoket: WebSocket,
 }
 
 pub enum Msg {
@@ -25,10 +22,8 @@ impl Component for Model {
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
         Model {
-            console: ConsoleService::new(),
             value: 0,
             messages: Vec::new(),
-            websoket: WebSocket::new("ws://127.0.0.1:3012").expect("Unable to connect to websocket"),
         }
     }
 
@@ -38,15 +33,8 @@ impl Component for Model {
                 self.value = new_value;
             }
             Msg::Clicked => {
-//                let y = *self.value;
                 self.messages.push(self.value);
-//                let x = self.messages.last();
-//                let s: String = x.to_string();
-                let s = "qwe";
-                self.console.log(&s);
-                println!("{}", s);
                 self.value = 0;
-                self.websoket.send_bytes(&[self.value]);
             }
         }
         true
