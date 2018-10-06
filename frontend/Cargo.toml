@@ -4,6 +4,10 @@ name = "hello_world"
 version = "0.0.1"
 authors = [ "Vadim Fabrichnov" ]
 
+[profile.dev]
+debug = true
+opt-level = 0
+
 [dependencies]
 stdweb = "0.4.2"
 yew = { git = "https://github.com/DenisKolodin/yew" }

@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use stdweb::traits::*;
 use stdweb::unstable::TryInto;
+use stdweb::console;
 use stdweb::web::{
     HtmlElement,
     document,
@@ -30,9 +31,20 @@ macro_rules! enclose {
     };
 }
 
+macro_rules! console {
+    ( log, $( $args:expr ),+ ) => { };
+    ( error, $( $args:expr ),+ ) => { };
+}
+
+//struct Client {
+//    clients: Vec<T>,
+//}
+
 fn main() {
     stdweb::initialize();
-
+//    let mut clients = Client{
+//        clients: Vec::new(),
+//    };
     let output_div: HtmlElement = document().query_selector( ".output" ).unwrap().unwrap().try_into().unwrap();
     let output_msg = Rc::new(move |msg: &str| {
         let elem = document().create_element("p").unwrap();
@@ -45,10 +57,11 @@ fn main() {
     });
 
     output_msg("> Connecting...");
-
     let ws = WebSocket::new("wss://echo.websocket.org").unwrap();
 
-    ws.add_event_listener( enclose!( (output_msg) move |_: SocketOpenEvent| {
+    ws.add_event_listener( enclose!( (output_msg) move |event: SocketOpenEvent| {
+        console!(log, "Hello world!");
+        output_msg("> Opened connection");
         output_msg("> Opened connection");
     }));
 
