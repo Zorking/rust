@@ -1,10 +1,10 @@
 extern crate stdweb;
+extern crate yew;
 
 use std::rc::Rc;
 
 use stdweb::traits::*;
 use stdweb::unstable::TryInto;
-use stdweb::console;
 use stdweb::web::{
     HtmlElement,
     document,
@@ -21,6 +21,8 @@ use stdweb::web::event::{
 
 use stdweb::web::html_element::InputElement;
 
+use yew::services::ConsoleService;
+
 // Shamelessly stolen from webplatform's TodoMVC example.
 macro_rules! enclose {
     ( ($( $x:ident ),*) $y:expr ) => {
@@ -31,10 +33,6 @@ macro_rules! enclose {
     };
 }
 
-macro_rules! console {
-    ( log, $( $args:expr ),+ ) => { };
-    ( error, $( $args:expr ),+ ) => { };
-}
 
 //struct Client {
 //    clients: Vec<T>,
@@ -45,6 +43,7 @@ fn main() {
 //    let mut clients = Client{
 //        clients: Vec::new(),
 //    };
+    let mut console = ConsoleService::new();
     let output_div: HtmlElement = document().query_selector( ".output" ).unwrap().unwrap().try_into().unwrap();
     let output_msg = Rc::new(move |msg: &str| {
         let elem = document().create_element("p").unwrap();
@@ -57,11 +56,10 @@ fn main() {
     });
 
     output_msg("> Connecting...");
-    let ws = WebSocket::new("wss://echo.websocket.org").unwrap();
+    let ws = WebSocket::new("ws://127.0.0.1:3012").unwrap();
 
-    ws.add_event_listener( enclose!( (output_msg) move |event: SocketOpenEvent| {
-        console!(log, "Hello world!");
-        output_msg("> Opened connection");
+    ws.add_event_listener( enclose!( (output_msg) move |_: SocketOpenEvent| {
+        console.log("Do you like what you see?");
         output_msg("> Opened connection");
     }));
 
