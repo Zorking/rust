@@ -13,6 +13,7 @@ impl Server {
     fn add_client(&mut self, sender: &Sender) {
         println!("New Connection {:?}", sender.token());
         self.clients.push(sender.clone());
+
     }
 
     fn remove_client(&mut self, sender: &Sender) -> Option<()> {
@@ -28,16 +29,10 @@ impl Server {
         Some(())
     }
 
-    fn broadcast(&self, msg: Message, ignore_token: Option<Token>) {
-        match ignore_token {
-            Some(token) => for client in self.clients.iter().filter(
-                    |&x| x.token() != token) {
-                client.send(msg.clone()).unwrap();
-            },
-            None => for client in self.clients.iter() {
-                client.send(msg.clone()).unwrap();
-            },
-        };
+    fn broadcast(&self, msg: Message, current_token: Option<Token>) {
+        for client in &self.clients {
+            client.send(format!("User {:?}  wrote: {}", current_token , msg.clone())).unwrap();
+        }
     }
 }
 
